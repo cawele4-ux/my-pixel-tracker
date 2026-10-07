@@ -31,3 +31,17 @@ if __name__ == '__main__':
 def home():
     return "Tracking server is up and running! 🚀"
     
+from flask import redirect # Ensure redirect is imported at the top
+
+@app.route('/track/click')
+def track_click():
+    # 1. Grab the lead ID and the final URL destination from the link parameters
+    lead_id = request.args.get('lead', 'unknown_lead')
+    destination = request.args.get('url', 'https://google.com') # fallback if url is missing
+    
+    # 2. Log the click event instantly to your Render terminal
+    print(f"🎯 CLICK ALERT: Lead '{lead_id}' clicked a link! Sending to: {destination}", flush=True)
+    
+    # 3. Redirect the user seamlessly to the actual website
+    return redirect(destination)
+    
