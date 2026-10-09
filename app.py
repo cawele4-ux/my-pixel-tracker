@@ -35,7 +35,7 @@ def track_pixel():
     
     # 🛡️ BOT GUARD: If it's a security bot, give it the image silently and stop execution
     if is_automated_bot(user_agent):
-        print(f"🤖 BOT FILTERED: Ignored security scan for lead '{lead_id}'", flush=True)
+        print(f"🤖 BOT FILTERED: Ignored security scan for open on lead '{lead_id}'", flush=True)
     else:
         # 👤 HUMAN ENTRANCE: Only send to Make.com if a real human opened it
         print(f"🔥 ALERT: Lead '{lead_id}' just opened the email!", flush=True)
@@ -55,23 +55,33 @@ def track_pixel():
     return response
 
 
-# --- 2. TRACKING LINK (CLICKS) ---
+# --- 2. TRACKING LINK (CLICKS WITH BOT FILTER INTEGRATED) ---
 @app.route('/track/click')
 def track_click():
+    # 🕵️ Check if the click is from a human or a link scanner bot checking safety
+    user_agent = request.headers.get('User-Agent', '')
     lead_id = request.args.get('lead', 'unknown_lead')
     destination = request.args.get('url', 'https://pgenaijajobs.com.ng')
-    print(f"🎯 CLICK ALERT: Lead '{lead_id}' clicked! Sending to: {destination}", flush=True)
     
-    # Send "Click" notification to the CRM
-    payload = {"event": "Link Clicked", "lead": lead_id, "destination": destination}
-    try:
-        requests.post(CRM_WEBHOOK_URL, json=payload, timeout=2)
-    except Exception as e:
-        print(f"CRM Sync Error (Click): {e}", flush=True)
+    # 🛡️ BOT GUARD: If a security scanner clicks the link, skip sending to Make.com
+    if is_automated_bot(user_agent):
+        print(f"🤖 BOT FILTERED: Ignored corporate link scan for lead '{lead_id}'", flush=True)
+    else:
+        # 👤 HUMAN ENTRANCE: Only notify your client if a real human clicked it
+        print(f"🎯 CLICK ALERT: Lead '{lead_id}' clicked! Sending to: {destination}", flush=True)
         
+        # Send "Click" notification to the CRM
+        payload = {"event": "Link Clicked", "lead": lead_id, "destination": destination}
+        try:
+            requests.post(CRM_WEBHOOK_URL, json=payload, timeout=2)
+        except Exception as e:
+            print(f"CRM Sync Error (Click): {e}", flush=True)
+        
+    # Real human or bot scanner, we still always redirect them to the final destination safely
     return redirect(destination)
 
 
+# --- 3. EXECUTION BLOCK (MUST REMAIN AT THE ABSOLUTE BOTTOM) ---
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
