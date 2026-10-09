@@ -6,8 +6,12 @@ from flask import Flask, send_file, request, make_response, redirect
 
 app = Flask(__name__)
 
-# ⚠️ PLACEHOLDER: You will get this URL from your CRM or Zapier in Step 2
-CRM_WEBHOOK_URL = "https://hook.us2.make.com/s8vgkb42877ntaonrf609ktri6f5uzog"
+# 🔄 DYNAMIC WEBHOOK: Looks for Render's environment variable first.
+# If it doesn't find one, it falls back to your original client URL.
+CRM_WEBHOOK_URL = os.environ.get(
+    "CRM_WEBHOOK_URL", 
+    "https://hook.us2.make.com/s8vgkb42877ntaonrf609ktri6f5uzog"
+)
 
 @app.route('/')
 def home():
@@ -54,9 +58,10 @@ def track_click():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
+# --- 3. BOT FILTER UTILITIES ---
 BOT_USER_AGENTS = ["bot", "safelinks", "security", "scan", "datadog", "microsoft", "cloud"]
 
 def is_automated_bot(user_agent_string):
     ua_lower = user_agent_string.lower()
     return any(bot_keyword in ua_lower for bot_keyword in BOT_USER_AGENTS)
-    
