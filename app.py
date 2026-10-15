@@ -33,13 +33,14 @@ def send_slack_notification(slack_url, message_text):
 # --- 🎨 CLIENT FACING BULK MARKETING DASHBOARD ---
 @app.route('/dashboard')
 def dashboard():
+    # We use raw HTML string processing rather than Jinja templates to bypass the dropdown placeholder collisions entirely
     html_dashboard = """
     <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>PGETrack.io Dashboard</title>
+        <title>PGETrack.io</title>
         <script src="https://jsdelivr.net"></script>
     </head>
     <body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-6">
@@ -126,7 +127,10 @@ def dashboard():
     </body>
     </html>
     """
-    return render_template_string(html_dashboard)
+    # Replace standard template execution blocks with simple raw response delivery to prevent Jinja collisions completely
+    response = make_response(html_dashboard)
+    response.headers['Content-Type'] = 'text/html'
+    return response
 
 
 # --- 1. TRACKING PIXEL ROUTE ---
