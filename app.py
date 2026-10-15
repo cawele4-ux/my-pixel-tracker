@@ -30,7 +30,7 @@ def send_slack_notification(slack_url, message_text):
         print(f"❌ Direct Slack Notification Error: {e}", flush=True)
 
 
-# --- 🎨 STANDALONE DESIGN ENGINE (FIXED STYLING ESCAPES) ---
+# --- 🎨 STANDALONE DESIGN ENGINE ---
 @app.route('/dashboard')
 def dashboard():
     html_dashboard = """<!DOCTYPE html>
@@ -239,7 +239,6 @@ def dashboard():
             const encodedShk = btoa(slackUrl).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+\$/, '');
             const baseUrl = window.location.origin;
             
-            // Fixed escaping: Added backslashes so Python handles strings safely
             document.getElementById('pixelOutput').value = '<img src="' + baseUrl + '/track/pixel.png?lead=' + encodeURIComponent(placeholderTag) + '&shk=' + encodedShk + '" width="1" height="1" style="display:none !important;" />';
             document.getElementById('linkOutput').value = baseUrl + '/track/click?lead=' + encodeURIComponent(placeholderTag) + '&url=' + destUrl + '&shk=' + encodedShk;
             document.getElementById('outputArea').classList.remove('hidden');
@@ -277,8 +276,8 @@ def track_pixel():
     else:
         print(f"🔥 HUMAN OPEN: Email opened by lead: '{lead_id}'", flush=True)
         slack_url = get_dynamic_slack_url(encoded_shk)
-if slack_url:
-message = f"📧 Email Opened! Lead {lead_id} has opened your outreach email template."
+        if slack_url:
+            message = f"📧 *Email Opened!* Lead *{lead_id}* has opened your outreach email template."
 send_slack_notification(slack_url, message)
 pixel_b64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
 pixel_data = base64.b64decode(pixel_b64)
