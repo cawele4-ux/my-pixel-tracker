@@ -39,12 +39,12 @@ def dashboard():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>PGE Bulk Tracker Dashboard</title>
+        <title>PGETrack.io Dashboard</title>
         <script src="https://jsdelivr.net"></script>
     </head>
     <body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-6">
         <div class="max-w-2xl w-full bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700">
-            <h1 class="text-3xl font-extrabold text-indigo-400 mb-2">PGETrack.io</h1>
+            <h1 class="text-3xl font-extrabold text-indigo-400 mb-2">🚀 PGETrack.io Master Tracker</h1>
             <p class="text-slate-400 mb-6 text-sm">Generate single campaign codes to track thousands of automated cold emails.</p>
             
             <div class="space-y-4">
